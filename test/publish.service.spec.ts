@@ -32,7 +32,7 @@ describe('PublishService', () => {
     createdCatalog: any;
   }> = {}) => ({
     course: {
-      findUnique: jest.fn().mockResolvedValue(overrides.course ?? mockCourse),
+      findUnique: jest.fn().mockResolvedValue('course' in overrides ? overrides.course : mockCourse),
     },
     catalog: {
       findFirst: jest.fn().mockResolvedValue(overrides.latestCatalog ?? null),

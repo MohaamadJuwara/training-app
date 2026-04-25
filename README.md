@@ -86,7 +86,7 @@ npm install
 ### 4. Configure environment
 
 ```bash
-cp .env.example .env
+cp .env.dev .env
 ```
 
 Edit `.env` and set `DATABASE_URL` to point at your local PostgreSQL instance.
