@@ -19,45 +19,98 @@ Trainers create and publish course drafts. Trainees browse the public Catalog.
 
 ---
 
-## Quick Start (Docker)
+## Setup — Docker (recommended)
+
+### 1. Prerequisites
+
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and **running**
+
+### 2. Clone and enter the project
 
 ```bash
-# 1. Enter the project
+git clone <repo-url>
 cd training-app
+```
 
-# 2. Copy env file
-cp .env.example .env
+### 3. Configure environment
 
-# 3. Start database + app
+```bash
+cp .env.dev .env
+```
+
+The defaults in `.env.example` work with Docker Compose as-is. See [Environment Variables](#environment-variables) for details.
+
+### 4. Build and start
+
+```bash
 docker compose up --build
+```
 
-# 4. Run migrations and seed (in a second terminal)
-docker exec -it training-app npx prisma migrate deploy
+This builds the image, starts PostgreSQL, runs `prisma migrate deploy`, and launches the app.
+
+### 5. Seed the database (optional, in a second terminal)
+
+```bash
 docker exec -it training-app npm run prisma:seed
 ```
 
-API: **http://localhost:3000**
-Swagger UI: **http://localhost:3000/api**
+### 6. Open the app
+
+| Service    | URL                       |
+|------------|---------------------------|
+| API        | http://localhost:3000     |
+| Swagger UI | http://localhost:3000/api |
 
 ---
 
-## Local Development (no Docker)
+## Setup — Local Development (no Docker)
 
-### Prerequisites
+### 1. Prerequisites
+
 - Node.js 20+
 - PostgreSQL 16 running locally
 
+### 2. Clone and enter the project
+
+```bash
+git clone <repo-url>
+cd training-app
+```
+
+### 3. Install dependencies
+
 ```bash
 npm install
-cp .env.example .env        # set DATABASE_URL to your local Postgres
+```
 
+### 4. Configure environment
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` and set `DATABASE_URL` to point at your local PostgreSQL instance.
+
+### 5. Generate Prisma client and run migrations
+
+```bash
 npm run prisma:generate
 npm run prisma:migrate
+```
+
+### 6. Seed the database (optional)
+
+```bash
 npm run prisma:seed
+```
+
+### 7. Start the dev server
+
+```bash
 npm run start:dev
 ```
 
-Once running:
+### 8. Open the app
 
 | Service       | URL                              |
 |---------------|----------------------------------|
@@ -65,7 +118,7 @@ Once running:
 | Swagger UI    | http://localhost:3000/api        |
 | Prisma Studio | http://localhost:5555 (separate) |
 
-> **Note:** `http://localhost:5555` is **Prisma Studio**, not the app. Start it separately with `npx prisma studio`.
+> Start Prisma Studio separately with `npx prisma studio`.
 
 ---
 
@@ -76,6 +129,17 @@ Once running:
 | `DATABASE_URL` | PostgreSQL connection string   |
 | `JWT_SECRET`   | Secret used to sign JWT tokens |
 | `PORT`         | HTTP port (default `3000`)     |
+
+---
+
+## Running Tests
+
+```bash
+npm test           # unit tests
+npm run test:cov   # with coverage report
+```
+
+`PublishService` tests in [test/publish.service.spec.ts](test/publish.service.spec.ts) cover: first publish, re-publish versioning, data snapshot, NotFoundException, ForbiddenException, BadRequestException.
 
 ---
 
@@ -121,14 +185,14 @@ Authorization: Bearer <access_token>
 
 ---
 
-## Running Tests
+## Seeded Users
 
-```bash
-npm test           # unit tests
-npm run test:cov   # with coverage report
-```
+| Email               | Role    |
+|---------------------|---------|
+| trainer@example.com | TRAINER |
+| trainee@example.com | TRAINEE |
 
-`PublishService` tests in [test/publish.service.spec.ts](test/publish.service.spec.ts) cover: first publish, re-publish versioning, data snapshot, NotFoundException, ForbiddenException, BadRequestException.
+Login with either via `POST /auth/login` to get a token.
 
 ---
 
@@ -152,14 +216,3 @@ prisma/
 test/
 └── publish.service.spec.ts
 ```
-
----
-
-## Seeded Users
-
-| Email               | Role    |
-|---------------------|---------|
-| trainer@example.com | TRAINER |
-| trainee@example.com | TRAINEE |
-
-Login with either via `POST /auth/login` to get a token.

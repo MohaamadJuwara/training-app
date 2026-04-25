@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { CoursesModule } from './courses/courses.module';
 import { PublishModule } from './publish/publish.module';
 import { CatalogModule } from './catalog/catalog.module';
+import { HealthController } from './health/health.controller';
 
 @Module({
   imports: [
@@ -17,5 +18,6 @@ import { CatalogModule } from './catalog/catalog.module';
     PublishModule,
     CatalogModule,
   ],
+  controllers: [HealthController],
 })
 export class AppModule {}
